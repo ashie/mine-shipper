@@ -31,30 +31,30 @@ module GitRedHubMine
       http.request(req)
     end
 
-    def get_custom_fields(params = {})
+    def custom_fields(params = {})
       response = redmine_api_request("custom_fields.json", params)
       JSON.parse(response.body)["custom_fields"]
     end
 
-    def get_issues(params = {})
+    def custom_filed_id
+      fields = custom_fields
+      field = fields.find do |field|
+        field["name"] == @custom_filed_name
+      end
+      field["id"]
+    end
+
+    def issues(params = {})
       response = redmine_api_request("issues.json", params)
       JSON.parse(response.body)["issues"]
     end
 
-    def get_issue(id)
+    def issue(id)
       params = {
         include: "journals"
       }
       response = redmine_api_request("issues/#{id}.json", params)
       JSON.parse(response.body)["issue"]
-    end
-
-    def custom_filed_id
-      fields = get_custom_fields
-      field = fields.find do |field|
-        field["name"] == @custom_filed_name
-      end
-      field["id"]
     end
   end
 end

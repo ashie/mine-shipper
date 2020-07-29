@@ -55,7 +55,7 @@ end
 redmine = GitRedHubMine::Redmine.new(ENV["REDMINE_BASE_URL"],
                                      ENV["REDMINE_CUSTOM_FIELD_NAME"],
                                      ENV["REDMINE_API_KEY"])
-issues = redmine.get_issues(
+issues = redmine.issues(
   {
     "cf_#{redmine.custom_filed_id}": config[:github_project_issue],
     status_id: "*",
@@ -63,6 +63,6 @@ issues = redmine.get_issues(
     limit: 1,
   })
 issue_id = issues.first["id"]
-redmine.get_issue(issue_id)["journals"].each do |journal|
+redmine.issue(issue_id)["journals"].each do |journal|
   p journal
 end
