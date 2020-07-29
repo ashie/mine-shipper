@@ -10,10 +10,7 @@ require 'gitredhubmine/redmine'
 def parse_command_line_options(config)
   opts = OptionParser.new
   opts.on("--github-issue ISSUE") do |github_issue|
-    project, issue = github_issue.split('#', 2)
-    config[:github_project_issue] = github_issue
-    config[:github_project] = project
-    config[:github_issue] = issue
+    config[:github][:issue] = github_issue
   end
   opts.parse!(ARGV)
   config
@@ -38,23 +35,34 @@ def dump_comment(comment)
   puts
 end
 
-config = {}
+config = {
+  github: {
+    access_token: ENV["GITHUB_ACCESS_TOKEN"],
+    issue: nil
+  },
+  redmine: {
+    base_url: ENV["REDMINE_BASE_URL"],
+    custom_filed_name: ENV["REDMINE_CUSTOM_FIELD_NAME"],
+    api_key: ENV["REDMINE_API_KEY"],
+  }
+}
 parse_command_line_options(config)
 
-client = Octokit::Client.new(:access_token => ENV["GITHUB_ACCESS_TOKEN"])
-issue = client.issue(config[:github_project], config[:github_issue])
+project, issue = config[:github][:issue].split('#', 2)
+client = Octokit::Client.new(:access_token => config[:github][:access_token])
+issue = client.issue(project, issue)
 puts issue.title
 puts
 dump_comment(issue)
 
-comments = client.issue_comments(config[:github_project], config[:github_issue])
+comments = client.issue_comments(project, issue)
 comments.each do |comment|
   dump_comment(comment)
 end
 
-redmine = GitRedHubMine::Redmine.new(ENV["REDMINE_BASE_URL"],
-                                     ENV["REDMINE_CUSTOM_FIELD_NAME"],
-                                     ENV["REDMINE_API_KEY"])
+redmine = GitRedHubMine::Redmine.new(config[:redmine][:base_url],
+                                     config[:redmine][:custom_filed_name],
+                                     config[:redmine][:api_key])
 issues = redmine.issues(
   {
     "cf_#{redmine.custom_filed_id}": config[:github_project_issue],
