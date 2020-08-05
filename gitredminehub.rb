@@ -2,19 +2,9 @@
 
 $LOAD_PATH.unshift("./lib")
 
-require 'optparse'
-require 'dotenv/load'
+require 'gitredhubmine/config'
 require 'gitredhubmine/github'
 require 'gitredhubmine/redmine'
-
-def parse_command_line_options(config)
-  opts = OptionParser.new
-  opts.on("--github-issue ISSUE") do |github_issue|
-    config[:github][:issue] = github_issue
-  end
-  opts.parse!(ARGV)
-  config
-end
 
 def dump_github_comment(comment)
   puts "========== GitHub Comment #{comment.created_at} =========="
@@ -23,19 +13,7 @@ def dump_github_comment(comment)
   puts
 end
 
-config = {
-  github: {
-    access_token: ENV["GITHUB_ACCESS_TOKEN"],
-    issue: nil
-  },
-  redmine: {
-    base_url: ENV["REDMINE_BASE_URL"],
-    custom_filed_name: ENV["REDMINE_CUSTOM_FIELD_NAME"],
-    api_key: ENV["REDMINE_API_KEY"],
-  }
-}
-parse_command_line_options(config)
-
+config = GitRedHubMine::Config::new
 project, issue = config[:github][:issue].split('#', 2)
 github = GitRedHubMine::GitHub::new(config[:github][:access_token])
 github_issue = github.issue(project, issue)
