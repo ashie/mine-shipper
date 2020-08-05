@@ -9,27 +9,18 @@ module GitRedHubMine
     end
 
     def run
-      @github_issue = github_issue
-      puts @github_issue.title
-      puts
-      @github_issue.comments.each do |comment|
-        dump_github_comment(comment)
-      end
-
-      @redmine_issue = redmine_issue
-      @redmine_issue["journals"].each do |journal|
-        next if journal["notes"].empty?
-        dump_redmine_comment(journal)
-      end
+      @github_issue = get_github_issue
+      @redmine_issue = get_redmine_issue
+      dump
     end
 
-    def github_issue
+    def get_github_issue
       project_name, issue_id = @config[:github][:issue].split('#', 2)
       github = GitHub::new(@config[:github][:access_token])
       github.issue(project_name, issue_id)
     end
 
-    def redmine_issue
+    def get_redmine_issue
       redmine = Redmine.new(@config[:redmine][:base_url],
                             @config[:redmine][:custom_field_name],
                             @config[:redmine][:api_key])
@@ -42,6 +33,19 @@ module GitRedHubMine
       issues = redmine.issues(search_options)
       issue_id = issues.first["id"]
       redmine.issue(issue_id)
+    end
+
+    def dump
+      puts @github_issue.title
+      puts
+      @github_issue.comments.each do |comment|
+        dump_github_comment(comment)
+      end
+
+      @redmine_issue["journals"].each do |journal|
+        next if journal["notes"].empty?
+        dump_redmine_comment(journal)
+      end
     end
 
     def dump_github_comment(comment)
