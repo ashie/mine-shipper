@@ -3,8 +3,8 @@
 $LOAD_PATH.unshift("./lib")
 
 require 'optparse'
-require 'octokit'
 require 'dotenv/load'
+require 'gitredhubmine/github'
 require 'gitredhubmine/redmine'
 
 def parse_command_line_options(config)
@@ -16,22 +16,10 @@ def parse_command_line_options(config)
   config
 end
 
-def render_comment(comment)
-  title = "#{comment.user.login} commented on #{comment.created_at}"
-  result  = "### [#{title}](#{comment.html_url})\n"
-  result += "{{collapse(More...)\n"
-  result += "* created_at: \"#{comment.created_at}\"\n"
-  result += "* updated_at: \"#{comment.updated_at}\"\n"
-  result += "}}\n"
-  result += "\n"
-  result += comment.body.gsub(/\R/, "\n")
-  result
-end
-
-def dump_comment(comment)
-  puts "========== GitHub Comment #{comment["created_at"]} =========="
+def dump_github_comment(comment)
+  puts "========== GitHub Comment #{comment.created_at} =========="
   puts
-  puts render_comment(comment)
+  puts comment.render
   puts
 end
 
@@ -48,16 +36,14 @@ config = {
 }
 parse_command_line_options(config)
 
-project, issue_id = config[:github][:issue].split('#', 2)
-client = Octokit::Client.new(:access_token => config[:github][:access_token])
-issue = client.issue(project, issue_id)
-puts issue.title
-puts
-dump_comment(issue)
+project, issue = config[:github][:issue].split('#', 2)
+github = GitRedHubMine::GitHub::new(config[:github][:access_token])
+github_issue = github.issue(project, issue)
 
-comments = client.issue_comments(project, issue_id)
-comments.each do |comment|
-  dump_comment(comment)
+puts github_issue.title
+puts
+github_issue.comments.each do |comment|
+  dump_github_comment(comment)
 end
 
 redmine = GitRedHubMine::Redmine.new(config[:redmine][:base_url],
