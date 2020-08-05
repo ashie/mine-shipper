@@ -48,14 +48,14 @@ config = {
 }
 parse_command_line_options(config)
 
-project, issue = config[:github][:issue].split('#', 2)
+project, issue_id = config[:github][:issue].split('#', 2)
 client = Octokit::Client.new(:access_token => config[:github][:access_token])
-issue = client.issue(project, issue)
+issue = client.issue(project, issue_id)
 puts issue.title
 puts
 dump_comment(issue)
 
-comments = client.issue_comments(project, issue)
+comments = client.issue_comments(project, issue_id)
 comments.each do |comment|
   dump_comment(comment)
 end
@@ -65,7 +65,7 @@ redmine = GitRedHubMine::Redmine.new(config[:redmine][:base_url],
                                      config[:redmine][:api_key])
 issues = redmine.issues(
   {
-    "cf_#{redmine.custom_filed_id}": config[:github_project_issue],
+    "cf_#{redmine.custom_filed_id}": config[:github][:issue],
     status_id: "*",
     sort: "id",
     limit: 1,
