@@ -16,10 +16,10 @@ module GitRedHubMine
 
       def initialize(client, project_name, issue_id)
         @issue = client.issue(project_name, issue_id)
-        @comments = [Comments.new(@issue)]
+        @comments = [Comment.new(@issue)]
         comments = client.issue_comments(project_name, issue_id)
         comments.each do |comment|
-          @comments << Comments.new(comment)
+          @comments << Comment.new(comment)
         end
       end
 
@@ -28,7 +28,7 @@ module GitRedHubMine
       end
     end
 
-    class Comments
+    class Comment
       def initialize(comment)
         @comment = comment
       end
