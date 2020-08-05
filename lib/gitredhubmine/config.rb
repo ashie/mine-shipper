@@ -10,7 +10,7 @@ module GitRedHubMine
       },
       redmine: {
         base_url: ENV["REDMINE_BASE_URL"],
-        custom_filed_name: ENV["REDMINE_CUSTOM_FIELD_NAME"],
+        custom_field_name: ENV["REDMINE_CUSTOM_FIELD_NAME"],
         api_key: ENV["REDMINE_API_KEY"],
       }
     }

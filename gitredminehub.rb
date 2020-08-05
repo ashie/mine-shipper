@@ -25,10 +25,10 @@ github_issue.comments.each do |comment|
 end
 
 redmine = GitRedHubMine::Redmine.new(config[:redmine][:base_url],
-                                     config[:redmine][:custom_filed_name],
+                                     config[:redmine][:custom_field_name],
                                      config[:redmine][:api_key])
 search_options = {
-  "cf_#{redmine.custom_filed_id}".to_sym => config[:github][:issue],
+  "cf_#{redmine.custom_field_id}".to_sym => config[:github][:issue],
   :status_id => '*',
   :sort => 'id',
   :limit => 1,

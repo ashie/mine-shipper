@@ -4,9 +4,9 @@ require 'json'
 
 module GitRedHubMine
   class Redmine
-    def initialize(base_url, custom_filed_name = "GitHub", api_key = nil)
+    def initialize(base_url, custom_field_name = "GitHub", api_key = nil)
       @base_url = base_url
-      @custom_filed_name = custom_filed_name
+      @custom_field_name = custom_field_name
       @api_key = api_key
     end
 
@@ -36,10 +36,10 @@ module GitRedHubMine
       JSON.parse(response.body)["custom_fields"]
     end
 
-    def custom_filed_id
+    def custom_field_id
       fields = custom_fields
       field = fields.find do |field|
-        field["name"] == @custom_filed_name
+        field["name"] == @custom_field_name
       end
       field["id"]
     end
