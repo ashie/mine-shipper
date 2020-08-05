@@ -56,13 +56,13 @@ module GitRedHubMine
       JSON.parse(response.body)["issue"]
     end
 
-    def get_issues_by_custom_field(field_name, field_value)
+    def get_issues_by_custom_field(field_name, field_value, limit: nil)
       custom_field_id = get_custom_field_id(field_name)
       search_options = {
         "cf_#{custom_field_id}".to_sym => field_value,
         :status_id => '*',
         :sort => 'id',
-        :limit => 1,
+        :limit => limit,
       }
       issues(search_options)
     end
