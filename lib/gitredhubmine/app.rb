@@ -26,8 +26,8 @@ module GitRedHubMine
     def get_redmine_issue
       redmine = Redmine.new(@config[:redmine][:base_url],
                             @config[:redmine][:api_key])
-      issues = redmine.get_issues_by_custom_field(@config[:redmine][:custom_field_name],
-                                                  @config[:github][:issue])
+      issues = redmine.issues_by_custom_field(@config[:redmine][:custom_field_name],
+                                              @config[:github][:issue])
       issue_id = issues.first["id"]
       redmine.issue(issue_id)
     end

@@ -9,7 +9,7 @@ module GitRedHubMine
       @api_key = api_key
     end
 
-    def redmine_api_request(path, params = {}, method = :get)
+    def api_request(path, params = {}, method = :get)
       url = "#{@base_url}/#{path}"
       uri = URI.parse(url)
 
@@ -31,11 +31,11 @@ module GitRedHubMine
     end
 
     def custom_fields(params = {})
-      response = redmine_api_request("custom_fields.json", params)
+      response = api_request("custom_fields.json", params)
       JSON.parse(response.body)["custom_fields"]
     end
 
-    def get_custom_field_id(custom_field_name)
+    def custom_field_id(custom_field_name)
       fields = custom_fields
       field = fields.find do |field|
         field["name"] == custom_field_name
@@ -44,7 +44,7 @@ module GitRedHubMine
     end
 
     def issues(params = {})
-      response = redmine_api_request("issues.json", params)
+      response = api_request("issues.json", params)
       JSON.parse(response.body)["issues"]
     end
 
@@ -52,14 +52,14 @@ module GitRedHubMine
       params = {
         include: "journals"
       }
-      response = redmine_api_request("issues/#{id}.json", params)
+      response = api_request("issues/#{id}.json", params)
       JSON.parse(response.body)["issue"]
     end
 
-    def get_issues_by_custom_field(field_name, field_value, limit: nil)
-      custom_field_id = get_custom_field_id(field_name)
+    def issues_by_custom_field(field_name, field_value, limit: nil)
+      cf_id = custom_field_id(field_name)
       search_options = {
-        "cf_#{custom_field_id}".to_sym => field_value,
+        "cf_#{cf_id}".to_sym => field_value,
         :status_id => '*',
         :sort => 'id',
         :limit => limit,
