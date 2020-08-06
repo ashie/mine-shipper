@@ -1,3 +1,4 @@
+require 'logger'
 require_relative './config'
 require_relative './github'
 require_relative './redmine'
@@ -6,12 +7,14 @@ module GitRedHubMine
   class App
     def initialize
       @config = Config::new
+      @logger = Logger.new(STDOUT)
+      @logger.level = Logger::DEBUG
     end
 
     def run
       @github_issue = get_github_issue
       @redmine_issue = get_redmine_issue
-      dump
+      debug_dump
     end
 
     def get_github_issue
@@ -29,9 +32,8 @@ module GitRedHubMine
       redmine.issue(issue_id)
     end
 
-    def dump
-      puts @github_issue.title
-      puts
+    def debug_dump
+      @logger.debug("GitHub issue #{@config[:github][:issue]}: #{@github_issue.title}")
       @github_issue.comments.each do |comment|
         dump_github_comment(comment)
       end
@@ -43,17 +45,15 @@ module GitRedHubMine
     end
 
     def dump_github_comment(comment)
-      puts "========== GitHub Comment #{comment.created_at} =========="
-      puts
-      puts comment.render
-      puts
+      log  = "========== GitHub Comment #{comment.created_at} ==========\n\n"
+      log += "#{comment.render}\n"
+      @logger.debug(log)
     end
 
     def dump_redmine_comment(comment)
-      puts "========== Redmine Comment #{comment["created_on"]} =========="
-      puts
-      puts comment["notes"]
-      puts
+      log  = "========== Redmine Comment #{comment["created_on"]} ==========\n"
+      log += "#{comment["notes"]}\n"
+      @logger.debug(log)
     end
   end
 end
