@@ -15,6 +15,14 @@ module GitRedHubMine
           @comments << Comment.new(journal)
         end
       end
+
+      def id
+        @json["id"]
+      end
+
+      def title
+        @json["subject"]
+      end
     end
 
     class Comment

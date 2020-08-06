@@ -12,10 +12,11 @@ module GitRedHubMine
     end
 
     def run
-      @redmine_issue = get_redmine_issue
-      if @redmine_issue
-        @github_issue = get_github_issue
-        debug_dump
+      redmine_issue = get_redmine_issue
+      if redmine_issue
+        github_issue = get_github_issue
+        dump_github_issue(github_issue)
+        dump_redmine_issue(redmine_issue)
       else
         @logger.info("Cannot find Redmine issue for #{@config[:github][:issue]}")
       end
@@ -34,27 +35,29 @@ module GitRedHubMine
                                     @config[:github][:issue])
     end
 
-    def debug_dump
-      @logger.debug("GitHub issue #{@config[:github][:issue]}: #{@github_issue.title}")
-      @github_issue.comments.each do |comment|
+    def dump_github_issue(issue)
+      @logger.debug("GitHub issue #{@config[:github][:issue]}: #{issue.title}")
+      issue.comments.each do |comment|
         dump_github_comment(comment)
       end
+    end
 
-      @redmine_issue.comments.each do |comment|
-        next if comment.body.empty?
+    def dump_redmine_issue(issue)
+      @logger.debug("Redmine issue \##{issue.id}: #{issue.title}")
+      issue.comments.each do |comment|
         dump_redmine_comment(comment)
       end
     end
 
     def dump_github_comment(comment)
-      log  = "========== GitHub Comment #{comment.created_at.getlocal} ==========\n\n"
-      log += "#{comment.render}\n"
+      log  = "GitHub Comment #{comment.created_at.getlocal}\n"
+      log += "#{comment.render}"
       @logger.debug(log)
     end
 
     def dump_redmine_comment(comment)
-      log  = "========== Redmine Comment #{comment.created_at.getlocal} ==========\n"
-      log += "#{comment.body}\n"
+      log  = "Redmine Comment #{comment.created_at.getlocal}\n"
+      log += "#{comment.body}"
       @logger.debug(log)
     end
   end
