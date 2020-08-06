@@ -44,13 +44,13 @@ module GitRedHubMine
     end
 
     def dump_github_comment(comment)
-      log  = "========== GitHub Comment #{comment.created_at} ==========\n\n"
+      log  = "========== GitHub Comment #{comment.created_at.getlocal} ==========\n\n"
       log += "#{comment.render}\n"
       @logger.debug(log)
     end
 
     def dump_redmine_comment(comment)
-      log  = "========== Redmine Comment #{comment.created_at} ==========\n"
+      log  = "========== Redmine Comment #{comment.created_at.getlocal} ==========\n"
       log += "#{comment.body}\n"
       @logger.debug(log)
     end
