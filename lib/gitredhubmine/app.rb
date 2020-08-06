@@ -8,7 +8,7 @@ module GitRedHubMine
     def initialize
       @config = Config::new
       @logger = Logger.new(STDOUT)
-      @logger.level = Logger::DEBUG
+      @logger.level = @config[:log_level]
     end
 
     def run

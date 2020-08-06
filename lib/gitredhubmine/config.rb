@@ -4,6 +4,7 @@ require 'dotenv/load'
 module GitRedHubMine
   class Config < Hash
     DEFAULT_CONFIG = {
+      log_level: ENV["GITREDHUBMINE_LOG_LEVEL"] || 'WARN',
       github: {
         access_token: ENV["GITHUB_ACCESS_TOKEN"],
         issue: nil
