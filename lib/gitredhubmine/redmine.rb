@@ -28,23 +28,22 @@ module GitRedHubMine
       def sync_comments(comments)
         path = "issues/#{id}.json"
         comments.each do |comment|
-          redmine_comment = find_comment(comment)
-          if redmine_comment
-            #redmine_comment.update(comment)
-          else
-            post_comment(comment)
-          end
+          sync_comment(comment)
+        end
+      end
+
+      def sync_comment(comment)
+        my_comment = find_comment(comment)
+        if my_comment
+          my_comment.update(comment)
+        else
+          post_comment(comment)
         end
       end
 
       def find_comment(comment)
-        @comments.each do |redmine_comment|
-          text = redmine_comment.body
-          escaped_url = Regexp.escape(comment.url)
-          escaped_time = Regexp.escape("#{comment.created_at.getlocal}")
-          if text.match(/^### \[.* commented on #{escaped_time}]\(#{escaped_url}\)\n/)
-            return comment
-          end
+        @comments.each do |my_comment|
+          return my_comment if my_comment.corresponding?(comment)
         end
         nil
       end
@@ -71,6 +70,32 @@ module GitRedHubMine
 
       def created_at
         Time.parse(@json["created_on"])
+      end
+
+      def corresponding?(comment)
+        escaped_url = Regexp.escape(comment.url)
+        escaped_time = Regexp.escape("#{comment.created_at.getlocal}")
+        if body.match(/^### \[.* commented on #{escaped_time}\]\(#{escaped_url}\)\n/)
+          true
+        else
+          false
+        end
+      end
+
+      def updated?(comment)
+        lines = body.split("\n", 6)
+        return false if lines[1] != "{{collapse(More...)"
+        return false if lines[4] != "}}"
+        timestr = lines[3].match(/^\* updated_at: \"(.*)\"$/).to_a[1]
+        return false if timestr.nil?
+        updated_time = Time.parse(timestr)
+        updated_time >= comment.created_at
+      end
+
+      def update(comment)
+        return if updated?(comment)
+        # TODO: There is no API to update a comment
+        # https://www.redmine.org/issues/10171
       end
     end
 
