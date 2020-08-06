@@ -100,5 +100,10 @@ module GitRedHubMine
       }
       issues(search_options)
     end
+
+    def issue_by_custom_field(field_name, field_value)
+      issues = issues_by_custom_field(field_name, field_value, limit: 1)
+      issues.empty? ? nil : issues.first
+    end
   end
 end

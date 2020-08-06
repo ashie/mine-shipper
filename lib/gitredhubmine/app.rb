@@ -12,9 +12,13 @@ module GitRedHubMine
     end
 
     def run
-      @github_issue = get_github_issue
       @redmine_issue = get_redmine_issue
-      debug_dump
+      if @redmine_issue
+        @github_issue = get_github_issue
+        debug_dump
+      else
+        @logger.info("Cannot find Redmine issue for #{@config[:github][:issue]}")
+      end
     end
 
     def get_github_issue
@@ -26,9 +30,8 @@ module GitRedHubMine
     def get_redmine_issue
       redmine = Redmine.new(@config[:redmine][:base_url],
                             @config[:redmine][:api_key])
-      issues = redmine.issues_by_custom_field(@config[:redmine][:custom_field_name],
-                                              @config[:github][:issue])
-      issues.first
+      redmine.issue_by_custom_field(@config[:redmine][:custom_field_name],
+                                    @config[:github][:issue])
     end
 
     def debug_dump
