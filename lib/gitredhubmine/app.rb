@@ -17,6 +17,7 @@ module GitRedHubMine
         github_issue = get_github_issue
         dump_github_issue(github_issue)
         dump_redmine_issue(redmine_issue)
+        redmine_issue.sync_comments(github_issue.comments)
       else
         @logger.info("Cannot find Redmine issue for #{@config[:github][:issue]}")
       end

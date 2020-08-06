@@ -7,7 +7,8 @@ module GitRedHubMine
     class Issue
       attr_reader :comments
 
-      def initialize(json)
+      def initialize(redmine, json)
+        @redmine = redmine
         @json = json
         @comments = []
         @json["journals"].each do |journal|
@@ -22,6 +23,40 @@ module GitRedHubMine
 
       def title
         @json["subject"]
+      end
+
+      def sync_comments(comments)
+        path = "issues/#{id}.json"
+        comments.each do |comment|
+          redmine_comment = find_comment(comment)
+          if redmine_comment
+            #redmine_comment.update(comment)
+          else
+            post_comment(comment)
+          end
+        end
+      end
+
+      def find_comment(comment)
+        @comments.each do |redmine_comment|
+          text = redmine_comment.body
+          escaped_url = Regexp.escape(comment.url)
+          escaped_time = Regexp.escape("#{comment.created_at.getlocal}")
+          if text.match(/^### \[.* commented on #{escaped_time}]\(#{escaped_url}\)\n/)
+            return comment
+          end
+        end
+        nil
+      end
+
+      def post_comment(comment)
+        path = "issues/#{id}.json"
+        params = {
+          issue: {
+            notes: comment.render
+          }
+        }
+        @redmine.api_request(path, params, :put)
       end
     end
 
@@ -95,7 +130,7 @@ module GitRedHubMine
       }
       response = api_request("issues/#{id}.json", params)
       issue_json = JSON.parse(response.body)["issue"]
-      Issue.new(issue_json)
+      Issue.new(self, issue_json)
     end
 
     def issues_by_custom_field(field_name, field_value, limit: nil)

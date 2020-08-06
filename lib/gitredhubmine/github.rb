@@ -37,6 +37,10 @@ module GitRedHubMine
         @comment.created_at
       end
 
+      def url
+        @comment.html_url
+      end
+
       def render
         title = "#{@comment.user.login} commented on #{@comment.created_at.getlocal}"
         result  = "### [#{title}](#{@comment.html_url})\n"
