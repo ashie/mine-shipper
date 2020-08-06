@@ -28,8 +28,7 @@ module GitRedHubMine
                             @config[:redmine][:api_key])
       issues = redmine.issues_by_custom_field(@config[:redmine][:custom_field_name],
                                               @config[:github][:issue])
-      issue_id = issues.first["id"]
-      redmine.issue(issue_id)
+      issues.first
     end
 
     def debug_dump
@@ -38,9 +37,9 @@ module GitRedHubMine
         dump_github_comment(comment)
       end
 
-      @redmine_issue["journals"].each do |journal|
-        next if journal["notes"].empty?
-        dump_redmine_comment(journal)
+      @redmine_issue.comments.each do |comment|
+        next if comment.body.empty?
+        dump_redmine_comment(comment)
       end
     end
 
@@ -51,8 +50,8 @@ module GitRedHubMine
     end
 
     def dump_redmine_comment(comment)
-      log  = "========== Redmine Comment #{comment["created_on"]} ==========\n"
-      log += "#{comment["notes"]}\n"
+      log  = "========== Redmine Comment #{comment.created_at} ==========\n"
+      log += "#{comment.body}\n"
       @logger.debug(log)
     end
   end

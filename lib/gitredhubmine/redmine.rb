@@ -4,6 +4,33 @@ require 'json'
 
 module GitRedHubMine
   class Redmine
+    class Issue
+      attr_reader :comments
+
+      def initialize(json)
+        @json = json
+        @comments = []
+        @json["journals"].each do |journal|
+          next if journal["notes"].empty?
+          @comments << Comment.new(journal)
+        end
+      end
+    end
+
+    class Comment
+      def initialize(json)
+        @json = json
+      end
+
+      def body
+        @json["notes"]
+      end
+
+      def created_at
+        Time.parse(@json["created_on"])
+      end
+    end
+
     def initialize(base_url, api_key = nil)
       @base_url = base_url
       @api_key = api_key
@@ -45,7 +72,13 @@ module GitRedHubMine
 
     def issues(params = {})
       response = api_request("issues.json", params)
-      JSON.parse(response.body)["issues"]
+      issues_json = JSON.parse(response.body)["issues"]
+      issues = []
+      issues_json.each do |issue_json|
+        id = issue_json["id"]
+        issues << issue(id)
+      end
+      issues
     end
 
     def issue(id)
@@ -53,7 +86,8 @@ module GitRedHubMine
         include: "journals"
       }
       response = api_request("issues/#{id}.json", params)
-      JSON.parse(response.body)["issue"]
+      issue_json = JSON.parse(response.body)["issue"]
+      Issue.new(issue_json)
     end
 
     def issues_by_custom_field(field_name, field_value, limit: nil)
