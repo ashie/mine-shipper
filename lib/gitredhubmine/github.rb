@@ -1,4 +1,5 @@
 require 'octokit'
+require_relative './issue_comment.rb'
 
 module GitRedHubMine
   class GitHub
@@ -28,7 +29,7 @@ module GitRedHubMine
       end
     end
 
-    class Comment
+    class Comment < IssueComment
       def initialize(comment)
         @comment = comment
       end
@@ -37,8 +38,20 @@ module GitRedHubMine
         @comment.created_at
       end
 
+      def updated_at
+        @comment.updated_at
+      end
+
       def url
         @comment.html_url
+      end
+
+      def user
+        @comment.user.login
+      end
+
+      def body
+        @comment.body.gsub(/\R/, "\n")
       end
 
       def render

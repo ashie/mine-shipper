@@ -1,6 +1,7 @@
 require 'net/https'
 require 'uri'
 require 'json'
+require_relative './issue_comment.rb'
 
 module GitRedHubMine
   class Redmine
@@ -59,7 +60,7 @@ module GitRedHubMine
       end
     end
 
-    class Comment
+    class Comment < IssueComment
       def initialize(json)
         @json = json
       end
@@ -70,26 +71,6 @@ module GitRedHubMine
 
       def created_at
         Time.parse(@json["created_on"])
-      end
-
-      def corresponding?(comment)
-        escaped_url = Regexp.escape(comment.url)
-        escaped_time = Regexp.escape("#{comment.created_at.getlocal}")
-        if body.match(/^### \[.* commented on #{escaped_time}\]\(#{escaped_url}\)\n/)
-          true
-        else
-          false
-        end
-      end
-
-      def updated?(comment)
-        lines = body.split("\n", 6)
-        return false if lines[1] != "{{collapse(More...)"
-        return false if lines[4] != "}}"
-        timestr = lines[3].match(/^\* updated_at: \"(.*)\"$/).to_a[1]
-        return false if timestr.nil?
-        updated_time = Time.parse(timestr)
-        updated_time >= comment.created_at
       end
 
       def update(comment)
