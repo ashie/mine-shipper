@@ -13,14 +13,25 @@ module GitRedHubMine
     end
 
     def run
+      begin
+        do_run
+      rescue Exception => e
+        @logger.error(e)
+      end
+    end
+
+    def do_run
+      @logger.info("Fetching #{@issue_key} comments on Redmine...")
       redmine_issue = get_redmine_issue
       if redmine_issue
+        @logger.info("Fetching #{@issue_key} comments on GitHub...")
         github_issue = get_github_issue
         dump_issue(github_issue)
         dump_issue(redmine_issue)
         redmine_issue.sync_comments(github_issue.comments)
+        @logger.info("Done synchronizing issue comments of #{@issue_key}")
       else
-        @logger.info("Cannot find Redmine issue for #{issue_key}}")
+        @logger.info("Cannot find Redmine issue for #{@issue_key}")
       end
     end
 
