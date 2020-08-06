@@ -16,12 +16,22 @@ module GitRedHubMine
       attr_reader :comments
 
       def initialize(client, project_name, issue_id)
-        @issue = client.issue(project_name, issue_id)
+        @project_name = project_name
+        @issue_id = issue_id
+        @issue = client.issue(@project_name, @issue_id)
         @comments = [Comment.new(@issue)]
-        comments = client.issue_comments(project_name, issue_id)
+        comments = client.issue_comments(@project_name, @issue_id)
         comments.each do |comment|
           @comments << Comment.new(comment)
         end
+      end
+
+      def tracker
+        "GitHub"
+      end
+
+      def identifier
+        "#{@project_name}#{@issue_id}"
       end
 
       def title
@@ -32,6 +42,10 @@ module GitRedHubMine
     class Comment < IssueComment
       def initialize(comment)
         @comment = comment
+      end
+
+      def tracker
+        "GitHub"
       end
 
       def created_at

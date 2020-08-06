@@ -18,6 +18,14 @@ module GitRedHubMine
         end
       end
 
+      def tracker
+        "Redmine"
+      end
+
+      def identifier
+        "#{@json["id"]}"
+      end
+
       def id
         @json["id"]
       end
@@ -63,6 +71,10 @@ module GitRedHubMine
     class Comment < IssueComment
       def initialize(json)
         @json = json
+      end
+
+      def tracker
+        "Redmine"
       end
 
       def body

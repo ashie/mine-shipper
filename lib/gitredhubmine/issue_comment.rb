@@ -3,6 +3,10 @@ module GitRedHubMine
   end
 
   class IssueComment
+    def tracker
+      "Unknown"
+    end
+
     def created_at
       raise NotImplemented
     end
