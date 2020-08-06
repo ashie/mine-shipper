@@ -38,11 +38,11 @@ module GitRedHubMine
       end
 
       def render
-        title = "#{@comment.user.login} commented on #{@comment.created_at}"
+        title = "#{@comment.user.login} commented on #{@comment.created_at.getlocal}"
         result  = "### [#{title}](#{@comment.html_url})\n"
         result += "{{collapse(More...)\n"
-        result += "* created_at: \"#{@comment.created_at}\"\n"
-        result += "* updated_at: \"#{@comment.updated_at}\"\n"
+        result += "* created_at: \"#{@comment.created_at.getlocal}\"\n"
+        result += "* updated_at: \"#{@comment.updated_at.getlocal}\"\n"
         result += "}}\n"
         result += "\n"
         result += @comment.body.gsub(/\R/, "\n")
