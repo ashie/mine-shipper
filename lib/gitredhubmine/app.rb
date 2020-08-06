@@ -7,6 +7,7 @@ module GitRedHubMine
   class App
     def initialize
       @config = Config::new
+      @issue_key = @config[:github][:issue]
       @logger = Logger.new(STDOUT)
       @logger.level = @config[:log_level]
     end
@@ -19,12 +20,12 @@ module GitRedHubMine
         dump_issue(redmine_issue)
         redmine_issue.sync_comments(github_issue.comments)
       else
-        @logger.info("Cannot find Redmine issue for #{@config[:github][:issue]}")
+        @logger.info("Cannot find Redmine issue for #{issue_key}}")
       end
     end
 
     def get_github_issue
-      project_name, issue_id = @config[:github][:issue].split('#', 2)
+      project_name, issue_id = @issue_key.split('#', 2)
       github = GitHub::new(@config[:github][:access_token])
       github.issue(project_name, issue_id)
     end
@@ -33,7 +34,7 @@ module GitRedHubMine
       redmine = Redmine.new(@config[:redmine][:base_url],
                             @config[:redmine][:api_key])
       redmine.issue_by_custom_field(@config[:redmine][:custom_field_name],
-                                    @config[:github][:issue])
+                                    @issue_key)
     end
 
     def dump_issue(issue)
