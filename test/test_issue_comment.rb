@@ -42,7 +42,7 @@ class TestIssueComment < Test::Unit::TestCase
        'different user' => [EXPECTED_FIRST_LINE.gsub("foobar", "hoge"), false],
        'different date' => [EXPECTED_FIRST_LINE.gsub("2020", "2018"), false],
        'different url' => [EXPECTED_FIRST_LINE.gsub("example.com", "example.org"), false])
-  def test_corresponding?(data)
+  test "corresponding?" do |data|
     body, expected = data
     comment1 = TestComment.new
     comment2 = TestComment.new
