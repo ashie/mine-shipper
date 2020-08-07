@@ -42,7 +42,7 @@ module GitRedHubMine
     def corresponding?(comment)
       escaped_url = Regexp.escape(comment.url)
       escaped_time = Regexp.escape("#{comment.created_at.getlocal}")
-      if body.match(/^### \[.* commented on #{escaped_time}\]\(#{escaped_url}\)\n/)
+      if body.match(/^### \[#{comment.user} commented on #{escaped_time}\]\(#{escaped_url}\)\n/)
         true
       else
         false

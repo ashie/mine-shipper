@@ -6,13 +6,17 @@ require_relative "../lib/gitredhubmine/issue_comment"
 class TestIssueComment < Test::Unit::TestCase
   include GitRedHubMine
 
+  CREATED_TIME = Time.parse("2020-08-06 10:41:42 +0000")
+  UPDATED_TIME = Time.parse("2020-08-06 10:52:12 +0000")
+  EXPECTED_FIRST_LINE = "### [foobar commented on #{CREATED_TIME.getlocal}](http://example.com/issue/1234)\n"
+
   class TestComment < IssueComment
     attr_reader :created_at, :updated_at, :user, :url, :body
     attr_accessor :body
 
     def initialize
-      @created_at = Time.parse("2020-08-06 10:41:42 +0000")
-      @updated_at = Time.parse("2020-08-06 10:52:12 +0000")
+      @created_at = CREATED_TIME
+      @updated_at = UPDATED_TIME
       @user = "foobar"
       @url = "http://example.com/issue/1234"
       @body = "hoge"
@@ -22,20 +26,27 @@ class TestIssueComment < Test::Unit::TestCase
   test "render" do
     comment = TestComment.new
     expected = 
-      "### [foobar commented on #{comment.created_at.getlocal}](http://example.com/issue/1234)\n" +
+      EXPECTED_FIRST_LINE +
       "{{collapse(More...)\n" +
-      "* created_at: \"#{comment.created_at.getlocal}\"\n" +
-      "* updated_at: \"#{comment.updated_at.getlocal}\"\n"+
+      "* created_at: \"#{CREATED_TIME.getlocal}\"\n" +
+      "* updated_at: \"#{UPDATED_TIME.getlocal}\"\n"+
       "}}\n" +
       "\n" +
       "hoge"
     assert_equal(expected, comment.render)
   end
 
-  test "corresponding?" do
+  data('corresponding' => [EXPECTED_FIRST_LINE, true],
+       'with heading space' => [" " + EXPECTED_FIRST_LINE, false],
+       'missing line break' => [EXPECTED_FIRST_LINE.delete("\n"), false],
+       'different user' => [EXPECTED_FIRST_LINE.gsub("foobar", "hoge"), false],
+       'different date' => [EXPECTED_FIRST_LINE.gsub("2020", "2018"), false],
+       'different url' => [EXPECTED_FIRST_LINE.gsub("example.com", "example.org"), false])
+  def test_corresponding?(data)
+    body, expected = data
     comment1 = TestComment.new
     comment2 = TestComment.new
-    comment1.body = "### [foobar commented on #{comment1.created_at.getlocal}](http://example.com/issue/1234)\n"
-    assert_true(comment1.corresponding?(comment2))
+    comment1.body = body
+    assert_equal(expected, comment1.corresponding?(comment2))
   end
 end
