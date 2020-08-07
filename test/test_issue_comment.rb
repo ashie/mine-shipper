@@ -8,6 +8,7 @@ class TestIssueComment < Test::Unit::TestCase
 
   class TestComment < IssueComment
     attr_reader :created_at, :updated_at, :user, :url, :body
+    attr_accessor :body
 
     def initialize
       @created_at = Time.parse("2020-08-06 10:41:42 +0000")
@@ -29,5 +30,12 @@ class TestIssueComment < Test::Unit::TestCase
       "\n" +
       "hoge"
     assert_equal(expected, comment.render)
+  end
+
+  test "corresponding?" do
+    comment1 = TestComment.new
+    comment2 = TestComment.new
+    comment1.body = "### [foobar commented on #{comment1.created_at.getlocal}](http://example.com/issue/1234)\n"
+    assert_true(comment1.corresponding?(comment2))
   end
 end
