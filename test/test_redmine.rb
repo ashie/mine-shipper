@@ -71,28 +71,30 @@ class TestRedmineIssue < Test::Unit::TestCase
       @redmine = Redmine.new("https://redmine.example.com")
       obj = JSON.parse(TEST_ISSUE.to_json)
       @issue = Redmine::Issue.new(@redmine, obj)
+      @comment = TestComment.new
+      @comment_params = {
+        issue: {
+          notes: @comment.render
+        }
+      }
     end
 
     test "post_comment" do
-      comment = TestComment.new
-      params = {
-        issue: {
-          notes: comment.render
-        }
-      }
-      mock(@redmine).api_request("issues/13.json", params, :put) {}
-      @issue.post_comment(TestComment.new)
+      mock(@redmine).api_request("issues/13.json", @comment_params, :put) { "200" }
+      assert_equal("200", @issue.post_comment(@comment))
     end
 
     test "sync_comment" do
-      comment = TestComment.new
-      params = {
-        issue: {
-          notes: comment.render
-        }
-      }
-      mock(@redmine).api_request("issues/13.json", params, :put) {}
-      @issue.sync_comment(TestComment.new)
+      mock(@redmine).api_request("issues/13.json", @comment_params, :put) { "200" }
+      assert_equal("200", @issue.sync_comment(@comment))
+    end
+
+    test "don't sync_comment" do
+      stub(@issue.comments[0]).corresponding? {true}
+      stub(@redmine).api_request do
+        raise "Updating an issue isn't implemented yet since Redmine doesn't have API to do it"
+      end
+      assert_nil(@issue.sync_comment(@comment))
     end
   end
 end
