@@ -3,6 +3,57 @@ require "json"
 require "time"
 require_relative "../lib/gitredhubmine/redmine"
 
+class TestRedmineIssue < Test::Unit::TestCase
+  include GitRedHubMine
+
+  TEST_ISSUE = {
+    id: 13,
+    subject: "test subject",
+    journals: [
+      {
+        created_on: Time.parse("2020-08-06 09:41:42 +0000"),
+        updated_on: Time.parse("2020-08-06 09:52:12 +0000"),
+        notes: "hoge"
+      },
+      {
+        created_on: Time.parse("2020-08-06 10:41:42 +0000"),
+        updated_on: Time.parse("2020-08-06 10:52:12 +0000"),
+        notes: ""
+      },
+      {
+        created_on: Time.parse("2020-08-06 11:41:42 +0000"),
+        updated_on: Time.parse("2020-08-06 11:52:12 +0000"),
+        notes: "hage"
+      }
+    ]
+  }
+
+  setup do
+    obj = JSON.parse(TEST_ISSUE.to_json)
+    @issue = Redmine::Issue.new(nil, obj)
+  end
+
+  test "tracker" do
+    assert_equal("Redmine", @issue.tracker)
+  end
+
+  test "id" do
+    assert_equal(13, @issue.id)
+  end
+
+  test "identifier" do
+    assert_equal("#13", @issue.identifier)
+  end
+
+  test "title" do
+    assert_equal("test subject", @issue.title)
+  end
+
+  test "comments" do
+    assert_equal(2, @issue.comments.length)
+  end
+end
+
 class TestRedmineComment < Test::Unit::TestCase
   include GitRedHubMine
 

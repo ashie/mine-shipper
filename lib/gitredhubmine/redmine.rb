@@ -23,7 +23,7 @@ module GitRedHubMine
       end
 
       def identifier
-        "#{@json["id"]}"
+        "##{@json["id"]}"
       end
 
       def id
