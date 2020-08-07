@@ -5,4 +5,5 @@ gem "dotenv"
 group :test, :development do
   gem "rake"
   gem "test-unit"
+  gem "test-unit-rr"
 end

@@ -1,4 +1,5 @@
 require "test/unit"
+require "test/unit/rr"
 require "json"
 require "time"
 require_relative "../lib/gitredhubmine/redmine"
@@ -51,6 +52,48 @@ class TestRedmineIssue < Test::Unit::TestCase
 
   test "comments" do
     assert_equal(2, @issue.comments.length)
+  end
+
+  sub_test_case "post comments" do
+    class TestComment < IssueComment
+      attr_accessor :created_at, :updated_at, :user, :url, :body
+
+      def initialize
+        @created_at = Time.parse("2020-08-06 12:41:42 +0000")
+        @updated_at = Time.parse("2020-08-06 12:52:12 +0000")
+        @user = "foobar"
+        @url = "https://example.com/issue/13#comment1"
+        @body = "hoge"
+      end
+    end
+
+    setup do
+      @redmine = Redmine.new("https://redmine.example.com")
+      obj = JSON.parse(TEST_ISSUE.to_json)
+      @issue = Redmine::Issue.new(@redmine, obj)
+    end
+
+    test "post_comment" do
+      comment = TestComment.new
+      params = {
+        issue: {
+          notes: comment.render
+        }
+      }
+      mock(@redmine).api_request("issues/13.json", params, :put) {}
+      @issue.post_comment(TestComment.new)
+    end
+
+    test "sync_comment" do
+      comment = TestComment.new
+      params = {
+        issue: {
+          notes: comment.render
+        }
+      }
+      mock(@redmine).api_request("issues/13.json", params, :put) {}
+      @issue.sync_comment(TestComment.new)
+    end
   end
 end
 
