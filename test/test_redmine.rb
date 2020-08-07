@@ -7,7 +7,6 @@ class TestRedmineComment < Test::Unit::TestCase
   include GitRedHubMine
 
   TEST_COMMENT = {
-    id: 13,
     created_on: Time.parse("2020-08-06 10:41:42 +0000"),
     updated_on: Time.parse("2020-08-06 10:52:12 +0000"),
     notes: "hoge"
