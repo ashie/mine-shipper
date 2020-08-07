@@ -40,32 +40,15 @@ module GitRedHubMine
     end
 
     class Comment < IssueComment
+      attr_reader :tracker, :created_at, :updated_at, :url, :user, :body
       def initialize(comment)
         @comment = comment
-      end
-
-      def tracker
-        "GitHub"
-      end
-
-      def created_at
-        @comment.created_at
-      end
-
-      def updated_at
-        @comment.updated_at
-      end
-
-      def url
-        @comment.html_url
-      end
-
-      def user
-        @comment.user.login
-      end
-
-      def body
-        @comment.body.gsub(/\R/, "\n")
+        @tracker = "GitHub"
+        @created_at = @comment.created_at
+        @updated_at = @comment.updated_at
+        @url = @comment.html_url
+        @usr = @comment.user.login
+        @body = @comment.body.gsub(/\R/, "\n")
       end
     end
   end
