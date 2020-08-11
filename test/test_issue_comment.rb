@@ -1,10 +1,10 @@
 require "test/unit"
 require "json"
 require "time"
-require_relative "../lib/gitredhubmine/issue_comment"
+require_relative "../lib/mine-shipper/issue_comment"
 
 class TestIssueComment < Test::Unit::TestCase
-  include GitRedHubMine
+  include MineShipper
 
   CREATED_TIME = Time.parse("2020-08-06 10:41:42 +0000")
   UPDATED_TIME = Time.parse("2020-08-06 10:52:12 +0000")

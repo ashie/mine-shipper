@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/mine-shipper/app'
+
+app = MineShipper::App.new
+app.run
