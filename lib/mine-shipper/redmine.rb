@@ -6,32 +6,20 @@ require_relative './issue_comment.rb'
 module MineShipper
   class Redmine
     class Issue
-      attr_reader :comments
+      attr_reader :tracker, :id, :identifier, :title, :comments
 
       def initialize(redmine, json)
         @redmine = redmine
         @json = json
+        @tracker = "Redmine"
+        @id = @json["id"]
+        @identifier = "##{@json["id"]}"
+        @title = @json["subject"]
         @comments = []
         @json["journals"].each do |journal|
           next if journal["notes"].empty?
           @comments << Comment.new(journal)
         end
-      end
-
-      def tracker
-        "Redmine"
-      end
-
-      def identifier
-        "##{@json["id"]}"
-      end
-
-      def id
-        @json["id"]
-      end
-
-      def title
-        @json["subject"]
       end
 
       def sync_comments(comments)
