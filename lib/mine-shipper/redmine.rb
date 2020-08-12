@@ -69,20 +69,12 @@ module MineShipper
     end
 
     class Comment < IssueComment
+      attr_reader :tracker, :body, :created_at
       def initialize(json)
         @json = json
-      end
-
-      def tracker
-        "Redmine"
-      end
-
-      def body
-        @json["notes"]
-      end
-
-      def created_at
-        Time.parse(@json["created_on"])
+        @tracker = "Redmine"
+        @body = @json["notes"]
+        @created_at = Time.parse(@json["created_on"])
       end
 
       def update(comment)
