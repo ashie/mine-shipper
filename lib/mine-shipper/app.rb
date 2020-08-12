@@ -20,6 +20,8 @@ module MineShipper
       end
     end
 
+    private
+
     def do_run
       @logger.info("Fetching #{@issue_key} comments on Redmine...")
       redmine_issue = get_redmine_issue
