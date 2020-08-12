@@ -56,7 +56,7 @@ module MineShipper
       timestr = lines[3].match(/^\* updated_at: \"(.*)\"$/).to_a[1]
       return false if timestr.nil?
       updated_time = Time.parse(timestr)
-      updated_time >= comment.created_at
+      updated_time >= comment.updated_at
     end
   end
 end

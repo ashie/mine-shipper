@@ -9,10 +9,18 @@ class TestIssueComment < Test::Unit::TestCase
   CREATED_TIME = Time.parse("2020-08-06 10:41:42 +0000")
   UPDATED_TIME = Time.parse("2020-08-06 10:52:12 +0000")
   EXPECTED_FIRST_LINE = "### [foobar commented on #{CREATED_TIME.getlocal}](http://example.com/issue/1234)\n"
+  EXPECTED_BODY =
+    EXPECTED_FIRST_LINE +
+    "{{collapse(More...)\n" +
+    "* created_at: \"#{CREATED_TIME.getlocal}\"\n" +
+    "* updated_at: \"#{UPDATED_TIME.getlocal}\"\n"+
+    "}}\n" +
+    "\n" +
+    "hoge"
 
   class TestComment < IssueComment
     attr_reader :created_at, :updated_at, :user, :url, :body
-    attr_accessor :body
+    attr_accessor :body, :updated_at
 
     def initialize
       @created_at = CREATED_TIME
@@ -25,15 +33,7 @@ class TestIssueComment < Test::Unit::TestCase
 
   test "render" do
     comment = TestComment.new
-    expected = 
-      EXPECTED_FIRST_LINE +
-      "{{collapse(More...)\n" +
-      "* created_at: \"#{CREATED_TIME.getlocal}\"\n" +
-      "* updated_at: \"#{UPDATED_TIME.getlocal}\"\n"+
-      "}}\n" +
-      "\n" +
-      "hoge"
-    assert_equal(expected, comment.render)
+    assert_equal(EXPECTED_BODY, comment.render)
   end
 
   data('corresponding' => [EXPECTED_FIRST_LINE, true],
@@ -48,5 +48,17 @@ class TestIssueComment < Test::Unit::TestCase
     comment2 = TestComment.new
     comment1.body = body
     assert_equal(expected, comment1.corresponding?(comment2))
+  end
+
+  data('same date'           => ["2020-08-06 10:52:12 +0000", true],
+       'updated at upstream' => ["2020-08-06 10:52:13 +0000", false],
+       'past date'           => ["2020-08-06 10:52:11 +0000", true])
+  test "updated?" do
+    date, expected = data
+    comment1 = TestComment.new
+    comment2 = TestComment.new
+    comment1.body = EXPECTED_BODY
+    comment2.updated_at = Time.parse(date)
+    assert_equal(expected, comment1.updated?(comment2))
   end
 end
