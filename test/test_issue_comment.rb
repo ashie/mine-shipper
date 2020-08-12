@@ -19,7 +19,7 @@ class TestIssueComment < Test::Unit::TestCase
     "hoge"
 
   class TestComment < IssueComment
-    attr_reader :created_at, :updated_at, :user, :url, :body
+    attr_reader :created_at, :user, :url, :body
     attr_accessor :body, :updated_at
 
     def initialize
