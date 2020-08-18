@@ -20,5 +20,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency("dotenv", "~> 2.7")
   spec.add_development_dependency("rake", "~> 13.0")
   spec.add_development_dependency("test-unit", "~> 3.3")
-  spec.add_development_dependency("test-unit-rr", "~> 1.2")
+  spec.add_development_dependency("test-unit-rr", "~> 1.0")
 end
