@@ -7,9 +7,9 @@ A command to duplicate comments on a GitHub issue to an associated Redmine issue
 1. Create API access key of your Redmine account
   * My account -> API access key
 2. Create a custom field with the following properties (Administration -> Custom fields)
-  * Format: Link
-  * Name: GitHub
-  * Regular expression: \A([\w-]+)/([\w-]+)#(\d+)\z
+  * Format: `Link`
+  * Name: `GitHub`
+  * Regular expression: `\A([\w-]+)/([\w-]+)#(\d+)\z`
   * Used as a filter: checked
 3. Enable the custom field at your Redmine project
 4. Create an issue on the project
