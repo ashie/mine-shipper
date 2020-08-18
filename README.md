@@ -1,4 +1,4 @@
-# MineShipper
+# mine-shipper
 
 A command to duplicate comments on a GitHub issue to an associated Redmine issue.
 
