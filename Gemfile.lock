@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    mine-shiper (0.0.1)
-      dotenv
+    mine-shipper (0.0.1)
+      dotenv (~> 2.7)
       octokit (~> 4.0)
 
 GEM
@@ -34,10 +34,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  mine-shiper!
-  rake
-  test-unit
-  test-unit-rr
+  mine-shipper!
+  rake (~> 13.0)
+  test-unit (~> 3.3)
+  test-unit-rr (~> 1.0)
 
 BUNDLED WITH
    2.1.4
