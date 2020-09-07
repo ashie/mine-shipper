@@ -27,7 +27,7 @@ module MineShipper
       },
       redmine: {
         base_url: ENV["REDMINE_BASE_URL"],
-        custom_field_name: ENV["REDMINE_CUSTOM_FIELD_NAME"],
+        custom_field_id: ENV["REDMINE_CUSTOM_FIELD_ID"],
         api_key: ENV["REDMINE_API_KEY"],
       }
     }

@@ -62,7 +62,7 @@ module MineShipper
     def get_redmine_issue
       redmine = Redmine.new(@config[:redmine][:base_url],
                             @config[:redmine][:api_key])
-      redmine.issue_by_custom_field(@config[:redmine][:custom_field_name],
+      redmine.issue_by_custom_field(@config[:redmine][:custom_field_id],
                                     @issue_key)
     end
 

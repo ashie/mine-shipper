@@ -120,7 +120,7 @@ module MineShipper
     end
 
     def custom_fields(params = {})
-      response = api_request("custom_fields.json", params)
+     response = api_request("custom_fields.json", params)
       JSON.parse(response.body)["custom_fields"]
     end
 
@@ -152,10 +152,9 @@ module MineShipper
       Issue.new(self, issue_json)
     end
 
-    def issues_by_custom_field(field_name, field_value, limit: nil)
-      cf_id = custom_field_id(field_name)
+    def issues_by_custom_field(field_id, field_value, limit: nil)
       search_options = {
-        "cf_#{cf_id}".to_sym => field_value,
+        "cf_#{field_id}".to_sym => field_value,
         :status_id => '*',
         :sort => 'id',
         :limit => limit,
@@ -163,8 +162,8 @@ module MineShipper
       issues(search_options)
     end
 
-    def issue_by_custom_field(field_name, field_value)
-      issues = issues_by_custom_field(field_name, field_value, limit: 1)
+    def issue_by_custom_field(field_id, field_value)
+      issues = issues_by_custom_field(field_id, field_value, limit: 1)
       issues.empty? ? nil : issues.first
     end
   end
