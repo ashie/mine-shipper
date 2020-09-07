@@ -111,7 +111,12 @@ module MineShipper
 
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      http.request(req)
+      response = http.request(req)
+      if response.kind_of?(Net::HTTPSuccess)
+        response
+      else
+        raise "#{uri}: #{response.code} #{response.message}"
+      end
     end
 
     def custom_fields(params = {})
